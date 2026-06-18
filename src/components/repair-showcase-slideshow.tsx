@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Wrench } from "lucide-react";
 
 type Slide = {
   id: string;
@@ -63,7 +63,13 @@ export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
             </div>
           </div>
 
-          <p className="mt-4 text-center font-medium text-zinc-900">{slide.title}</p>
+          <div className="mt-5 flex flex-col items-center gap-1.5">
+            <span className="flex items-center gap-2 text-lg font-semibold text-brand-navy">
+              <Wrench className="h-4 w-4 text-brand-red" strokeWidth={2} />
+              {slide.title}
+            </span>
+            <span className="h-0.5 w-10 rounded-full bg-brand-red" />
+          </div>
 
           {slides.length > 1 && (
             <>
