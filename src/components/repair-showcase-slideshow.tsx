@@ -44,31 +44,33 @@ export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-zinc-200">
-            <div className="relative aspect-square">
-              <Image src={slide.beforeUrl} alt={`${slide.title} - before`} fill className="object-cover" />
-              <span className="absolute inset-0 flex items-center justify-center">
-                <span className="rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-white">
-                  Before
+          <div key={slide.id} className="animate-slide-fade">
+            <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-zinc-200">
+              <div className="relative aspect-square">
+                <Image src={slide.beforeUrl} alt={`${slide.title} - before`} fill className="object-cover" />
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <span className="rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-white">
+                    Before
+                  </span>
                 </span>
-              </span>
-            </div>
-            <div className="relative aspect-square border-l border-white/70">
-              <Image src={slide.afterUrl} alt={`${slide.title} - after`} fill className="object-cover" />
-              <span className="absolute inset-0 flex items-center justify-center">
-                <span className="rounded-full bg-brand-red/80 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-white">
-                  After
+              </div>
+              <div className="relative aspect-square border-l border-white/70">
+                <Image src={slide.afterUrl} alt={`${slide.title} - after`} fill className="object-cover" />
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <span className="rounded-full bg-brand-red/80 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-white">
+                    After
+                  </span>
                 </span>
-              </span>
+              </div>
             </div>
-          </div>
 
-          <div className="mt-5 flex flex-col items-center gap-1.5">
-            <span className="flex items-center gap-2 text-lg font-semibold text-brand-navy">
-              <Wrench className="h-4 w-4 text-brand-red" strokeWidth={2} />
-              {slide.title}
-            </span>
-            <span className="h-0.5 w-10 rounded-full bg-brand-red" />
+            <div className="mt-5 flex flex-col items-center gap-1.5">
+              <span className="flex items-center gap-2 text-lg font-semibold text-brand-navy">
+                <Wrench className="h-4 w-4 text-brand-red" strokeWidth={2} />
+                {slide.title}
+              </span>
+              <span className="h-0.5 w-10 rounded-full bg-brand-red" />
+            </div>
           </div>
 
           {slides.length > 1 && (
