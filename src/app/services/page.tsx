@@ -44,11 +44,11 @@ export default async function ServicesPage() {
                 .map((service) => (
                   <div
                     key={service.id}
-                    className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm"
+                    className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div className="flex items-baseline justify-between gap-3">
                       <h3 className="font-medium text-zinc-900">{service.name}</h3>
-                      <span className="text-sm font-semibold whitespace-nowrap" style={{ color: "#C0223B" }}>
+                      <span className="text-sm font-semibold whitespace-nowrap text-brand-red">
                         {service.price_rwf.toLocaleString()} RWF
                       </span>
                     </div>
@@ -66,8 +66,7 @@ export default async function ServicesPage() {
           <div className="text-center">
             <Link
               href="/booking"
-              className="inline-block px-8 py-3 text-sm font-semibold text-white rounded-md"
-              style={{ backgroundColor: "#C0223B" }}
+              className="inline-block px-8 py-3 text-sm font-semibold text-white rounded-md bg-brand-red hover:bg-brand-red-dark transition-colors"
             >
               Book an appointment
             </Link>

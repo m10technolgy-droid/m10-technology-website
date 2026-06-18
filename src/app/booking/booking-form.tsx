@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Service } from "@/lib/types";
 
 const inputClass =
-  "mt-1 w-full rounded border border-zinc-300 px-3 py-2 outline-none focus:border-[#C0223B] focus:ring-1 focus:ring-[#C0223B]";
+  "mt-1 w-full rounded border border-zinc-300 px-3 py-2 outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red";
 
 export function BookingForm({ services }: { services: Service[] }) {
   const [fullName, setFullName] = useState("");
@@ -57,8 +57,7 @@ export function BookingForm({ services }: { services: Service[] }) {
         </code>
         <Link
           href="/track-status"
-          className="mt-4 inline-block text-sm font-medium"
-          style={{ color: "#1D4ED8" }}
+          className="mt-4 inline-block text-sm font-medium text-brand-blue hover:underline"
         >
           Track your repair status &rarr;
         </Link>
@@ -132,8 +131,7 @@ export function BookingForm({ services }: { services: Service[] }) {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="w-full rounded-md px-4 py-2 font-semibold text-white disabled:opacity-50"
-        style={{ backgroundColor: "#C0223B" }}
+        className="w-full rounded-md px-4 py-2 font-semibold text-white bg-brand-red hover:bg-brand-red-dark transition-colors disabled:opacity-50"
       >
         {status === "submitting" ? "Booking..." : "Confirm booking"}
       </button>

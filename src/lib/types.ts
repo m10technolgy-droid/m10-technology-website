@@ -23,6 +23,14 @@ export type Category = {
   name: string;
 };
 
+export type RepairShowcase = {
+  id: string;
+  title: string;
+  before_image_path: string;
+  after_image_path: string;
+  is_published: boolean;
+};
+
 export type Ticket = {
   id: string;
   booking_id: string;
