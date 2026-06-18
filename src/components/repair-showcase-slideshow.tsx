@@ -11,7 +11,7 @@ type Slide = {
   afterUrl: string;
 };
 
-const AUTO_ADVANCE_MS = 5000;
+const AUTO_ADVANCE_MS = 3000;
 
 export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
