@@ -44,18 +44,22 @@ export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div className="grid grid-cols-2 gap-3 sm:gap-6">
-            <div>
-              <div className="relative aspect-square overflow-hidden rounded-xl border border-zinc-200">
-                <Image src={slide.beforeUrl} alt={`${slide.title} - before`} fill className="object-cover" />
-              </div>
-              <p className="mt-2 text-center text-sm font-medium text-zinc-500">Before</p>
+          <div className="grid grid-cols-2 overflow-hidden rounded-xl border border-zinc-200">
+            <div className="relative aspect-square">
+              <Image src={slide.beforeUrl} alt={`${slide.title} - before`} fill className="object-cover" />
+              <span className="absolute inset-0 flex items-center justify-center">
+                <span className="rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-white">
+                  Before
+                </span>
+              </span>
             </div>
-            <div>
-              <div className="relative aspect-square overflow-hidden rounded-xl border border-zinc-200">
-                <Image src={slide.afterUrl} alt={`${slide.title} - after`} fill className="object-cover" />
-              </div>
-              <p className="mt-2 text-center text-sm font-medium text-brand-red">After</p>
+            <div className="relative aspect-square border-l border-white/70">
+              <Image src={slide.afterUrl} alt={`${slide.title} - after`} fill className="object-cover" />
+              <span className="absolute inset-0 flex items-center justify-center">
+                <span className="rounded-full bg-brand-red/80 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-white">
+                  After
+                </span>
+              </span>
             </div>
           </div>
 
