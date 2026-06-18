@@ -59,6 +59,8 @@ export default async function Home() {
     <div className="min-h-full flex flex-col">
       <Nav />
 
+      <RepairShowcaseSlideshow slides={slides} />
+
       {/* Hero */}
       <section className="bg-brand-navy text-white py-20 px-6">
         <div className="mx-auto max-w-4xl text-center">
@@ -91,8 +93,6 @@ export default async function Home() {
           </p>
         </div>
       </section>
-
-      <RepairShowcaseSlideshow slides={slides} />
 
       {/* Features */}
       <section className="py-16 px-6 bg-zinc-50">
