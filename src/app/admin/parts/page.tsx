@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Part } from "@/lib/types";
+import type { Category, Part } from "@/lib/types";
 import { PartsManager } from "./parts-manager";
 
 export default async function AdminPartsPage() {
@@ -12,6 +12,12 @@ export default async function AdminPartsPage() {
     .order("name")
     .returns<Part[]>();
 
+  const { data: categories } = await supabase
+    .from("part_categories")
+    .select("id, name")
+    .order("name")
+    .returns<Category[]>();
+
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
       <h1 className="text-2xl font-semibold">Parts Stock</h1>
@@ -21,7 +27,7 @@ export default async function AdminPartsPage() {
 
       {error && <p className="mt-4 text-red-600">Could not load parts: {error.message}</p>}
 
-      <PartsManager parts={parts ?? []} />
+      <PartsManager parts={parts ?? []} categories={categories ?? []} />
     </main>
   );
 }

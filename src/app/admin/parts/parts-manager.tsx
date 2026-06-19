@@ -3,19 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { Part, PartStockEntry } from "@/lib/types";
+import type { Category, Part, PartStockEntry } from "@/lib/types";
+import { PartCategoriesManager } from "./part-categories-manager";
 
-const CATEGORIES = [
-  { value: "screen", label: "Screen" },
-  { value: "battery", label: "Battery" },
-  { value: "camera", label: "Camera" },
-  { value: "other", label: "Other" },
-];
-
-export function PartsManager({ parts }: { parts: Part[] }) {
+export function PartsManager({ parts, categories }: { parts: Part[]; categories: Category[] }) {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0].value);
+  const [category, setCategory] = useState(categories[0]?.name ?? "");
   const [adding, setAdding] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -36,8 +30,12 @@ export function PartsManager({ parts }: { parts: Part[] }) {
     setAdding(false);
   }
 
+  const usedCategories = Array.from(new Set(parts.map((p) => p.category)));
+
   return (
-    <div className="mt-6">
+    <div className="mt-6 space-y-6">
+      <PartCategoriesManager categories={categories} />
+
       <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-3 rounded-lg border border-zinc-200 bg-white p-4">
         <input
           required
@@ -47,17 +45,20 @@ export function PartsManager({ parts }: { parts: Part[] }) {
           className="flex-1 min-w-[200px] rounded border border-zinc-300 px-2 py-1 text-sm"
         />
         <select
+          required
           value={category}
+          disabled={categories.length === 0}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded border border-zinc-300 px-2 py-1 text-sm"
+          className="rounded border border-zinc-300 px-2 py-1 text-sm capitalize"
         >
-          {CATEGORIES.map((c) => (
-            <option key={c.value} value={c.value}>{c.label}</option>
+          {categories.length === 0 && <option value="">Add a category first</option>}
+          {categories.map((c) => (
+            <option key={c.id} value={c.name}>{c.name}</option>
           ))}
         </select>
         <button
           type="submit"
-          disabled={adding}
+          disabled={adding || categories.length === 0}
           className="rounded bg-black px-3 py-1 text-sm text-white disabled:opacity-40"
         >
           {adding ? "Adding..." : "Add part"}
@@ -65,14 +66,13 @@ export function PartsManager({ parts }: { parts: Part[] }) {
       </form>
       {errorMessage && <p className="mt-2 text-sm text-red-600">{errorMessage}</p>}
 
-      <div className="mt-6 space-y-6">
+      <div className="space-y-6">
         {parts.length === 0 && <p className="text-zinc-600">No parts yet. Add one above.</p>}
-        {CATEGORIES.map((c) => {
-          const inCategory = parts.filter((p) => p.category === c.value);
-          if (inCategory.length === 0) return null;
+        {usedCategories.map((categoryName) => {
+          const inCategory = parts.filter((p) => p.category === categoryName);
           return (
-            <div key={c.value}>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">{c.label}</h2>
+            <div key={categoryName}>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 capitalize">{categoryName}</h2>
               <div className="mt-2 space-y-3">
                 {inCategory.map((part) => (
                   <PartRow key={part.id} part={part} />
