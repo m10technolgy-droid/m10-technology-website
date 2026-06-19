@@ -56,6 +56,8 @@ export type PartStockEntry = {
   selling_price_rwf: number | null;
   sale_price_rwf: number | null;
   cost_price_rwf: number | null;
+  payment_method: string | null;
+  payment_status: string | null;
   note: string | null;
   created_at: string;
 };

@@ -101,6 +101,8 @@ function PartRow({ part }: { part: Part }) {
 
   const [saleQty, setSaleQty] = useState("1");
   const [salePrice, setSalePrice] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentStatus, setPaymentStatus] = useState<"paid" | "pending">("paid");
   const [saleNote, setSaleNote] = useState("");
 
   async function loadHistory() {
@@ -108,7 +110,7 @@ function PartRow({ part }: { part: Part }) {
     const supabase = createClient();
     const { data } = await supabase
       .from("part_stock_entries")
-      .select("id, part_id, entry_type, quantity, buy_price_rwf, selling_price_rwf, sale_price_rwf, cost_price_rwf, note, created_at")
+      .select("id, part_id, entry_type, quantity, buy_price_rwf, selling_price_rwf, sale_price_rwf, cost_price_rwf, payment_method, payment_status, note, created_at")
       .eq("part_id", part.id)
       .order("created_at", { ascending: false })
       .limit(10)
@@ -164,6 +166,8 @@ function PartRow({ part }: { part: Part }) {
       quantity: qty,
       sale_price_rwf: salePrice ? Number(salePrice) : null,
       cost_price_rwf: part.last_buy_price_rwf,
+      payment_method: paymentMethod,
+      payment_status: paymentStatus,
       note: saleNote || null,
     });
 
@@ -172,6 +176,8 @@ function PartRow({ part }: { part: Part }) {
     } else {
       setSaleQty("1");
       setSalePrice("");
+      setPaymentMethod("cash");
+      setPaymentStatus("paid");
       setSaleNote("");
       router.refresh();
       if (historyOpen) await loadHistory();
@@ -259,6 +265,30 @@ function PartRow({ part }: { part: Part }) {
               placeholder="Sale price"
               className="w-24 rounded border border-zinc-300 px-2 py-1 text-sm"
             />
+            <select
+              value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}
+              className="rounded border border-zinc-300 px-2 py-1 text-sm"
+            >
+              <option value="cash">Cash</option>
+              <option value="momo">MoMo</option>
+              <option value="crypto">Crypto</option>
+            </select>
+            <div className="flex rounded border border-zinc-300 overflow-hidden text-sm">
+              <button
+                type="button"
+                onClick={() => setPaymentStatus("paid")}
+                className={`px-2 py-1 ${paymentStatus === "paid" ? "bg-zinc-900 text-white" : "bg-white text-zinc-600"}`}
+              >
+                Paid now
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentStatus("pending")}
+                className={`px-2 py-1 ${paymentStatus === "pending" ? "bg-zinc-900 text-white" : "bg-white text-zinc-600"}`}
+              >
+                Pay later
+              </button>
+            </div>
             <input
               value={saleNote} onChange={(e) => setSaleNote(e.target.value)}
               placeholder="Note (optional)"
@@ -305,6 +335,11 @@ function PartRow({ part }: { part: Part }) {
                     ` (sell price set to ${entry.selling_price_rwf.toLocaleString()} RWF)`}
                   {entry.entry_type === "sold" && entry.sale_price_rwf != null && entry.cost_price_rwf != null &&
                     ` (profit ${(entry.quantity * (entry.sale_price_rwf - entry.cost_price_rwf)).toLocaleString()} RWF)`}
+                  {entry.entry_type === "sold" && entry.payment_method &&
+                    ` · via ${entry.payment_method}`}
+                  {entry.entry_type === "sold" && entry.payment_status === "pending" && (
+                    <span className="font-medium text-amber-700"> &middot; pending payment</span>
+                  )}
                   {" "}&middot;{" "}
                   {new Date(entry.created_at).toLocaleDateString()}
                   {entry.note && <span className="text-zinc-400"> &middot; {entry.note}</span>}
