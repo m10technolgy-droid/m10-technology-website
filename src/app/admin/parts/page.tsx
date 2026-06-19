@@ -7,7 +7,7 @@ export default async function AdminPartsPage() {
 
   const { data: parts, error } = await supabase
     .from("parts")
-    .select("id, name, category, stock_quantity, selling_price_rwf")
+    .select("id, name, category, stock_quantity, selling_price_rwf, last_buy_price_rwf")
     .order("category")
     .order("name")
     .returns<Part[]>();
