@@ -43,6 +43,7 @@ export type Part = {
   name: string;
   category: string;
   stock_quantity: number;
+  selling_price_rwf: number | null;
 };
 
 export type PartStockEntry = {
@@ -50,6 +51,8 @@ export type PartStockEntry = {
   part_id: string;
   entry_type: string;
   quantity: number;
+  buy_price_rwf: number | null;
+  sale_price_rwf: number | null;
   note: string | null;
   created_at: string;
 };

@@ -88,20 +88,27 @@ export function PartsManager({ parts }: { parts: Part[] }) {
 
 function PartRow({ part }: { part: Part }) {
   const router = useRouter();
-  const [quantity, setQuantity] = useState("1");
-  const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [historyOpen, setHistoryOpen] = useState(false);
   const [entries, setEntries] = useState<PartStockEntry[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
+  const [receiveQty, setReceiveQty] = useState("1");
+  const [buyPrice, setBuyPrice] = useState("");
+  const [sellingPrice, setSellingPrice] = useState(part.selling_price_rwf?.toString() ?? "");
+  const [receiveNote, setReceiveNote] = useState("");
+
+  const [saleQty, setSaleQty] = useState("1");
+  const [salePrice, setSalePrice] = useState("");
+  const [saleNote, setSaleNote] = useState("");
+
   async function loadHistory() {
     setLoadingHistory(true);
     const supabase = createClient();
     const { data } = await supabase
       .from("part_stock_entries")
-      .select("id, part_id, entry_type, quantity, note, created_at")
+      .select("id, part_id, entry_type, quantity, buy_price_rwf, sale_price_rwf, note, created_at")
       .eq("part_id", part.id)
       .order("created_at", { ascending: false })
       .limit(10)
@@ -116,8 +123,8 @@ function PartRow({ part }: { part: Part }) {
     if (next) await loadHistory();
   }
 
-  async function logEntry(entryType: "received" | "sold") {
-    const qty = Number(quantity);
+  async function handleAddStock() {
+    const qty = Number(receiveQty);
     if (!qty || qty < 1) return;
     setSaving(true);
     setErrorMessage("");
@@ -125,16 +132,46 @@ function PartRow({ part }: { part: Part }) {
     const supabase = createClient();
     const { error } = await supabase.from("part_stock_entries").insert({
       part_id: part.id,
-      entry_type: entryType,
+      entry_type: "received",
       quantity: qty,
-      note: note || null,
+      buy_price_rwf: buyPrice ? Number(buyPrice) : null,
+      selling_price_rwf: sellingPrice ? Number(sellingPrice) : null,
+      note: receiveNote || null,
     });
 
     if (error) {
       setErrorMessage(error.message);
     } else {
-      setQuantity("1");
-      setNote("");
+      setReceiveQty("1");
+      setBuyPrice("");
+      setReceiveNote("");
+      router.refresh();
+      if (historyOpen) await loadHistory();
+    }
+    setSaving(false);
+  }
+
+  async function handleRecordSale() {
+    const qty = Number(saleQty);
+    if (!qty || qty < 1) return;
+    setSaving(true);
+    setErrorMessage("");
+
+    const supabase = createClient();
+    const { error } = await supabase.from("part_stock_entries").insert({
+      part_id: part.id,
+      entry_type: "sold",
+      quantity: qty,
+      sale_price_rwf: salePrice ? Number(salePrice) : null,
+      note: saleNote || null,
+    });
+
+    if (error) {
+      setErrorMessage(error.message);
+    } else {
+      setSaleQty("1");
+      setSalePrice("");
+      setSaleNote("");
       router.refresh();
       if (historyOpen) await loadHistory();
     }
@@ -158,46 +195,82 @@ function PartRow({ part }: { part: Part }) {
 
   return (
     <div className="rounded-lg border border-zinc-200 bg-white p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="font-medium text-zinc-900">{part.name}</p>
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <p className="font-medium text-zinc-900">{part.name}</p>
+        <div className="flex items-center gap-3">
+          {part.selling_price_rwf != null && (
+            <span className="text-sm text-zinc-500">Sells for {part.selling_price_rwf.toLocaleString()} RWF</span>
+          )}
           {part.stock_quantity <= 0 ? (
             <span className="inline-block rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">
               Out of stock
             </span>
           ) : (
-            <p className="text-sm text-zinc-500">{part.stock_quantity} in stock</p>
+            <span className="text-sm font-semibold text-zinc-900">{part.stock_quantity} in stock</span>
           )}
         </div>
+      </div>
 
-        <div className="flex flex-wrap items-end gap-2">
-          <input
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            className="w-16 rounded border border-zinc-300 px-2 py-1 text-sm"
-          />
-          <input
-            placeholder="Note (optional)"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            className="w-36 rounded border border-zinc-300 px-2 py-1 text-sm"
-          />
-          <button
-            onClick={() => logEntry("received")}
-            disabled={saving}
-            className="rounded border border-green-300 px-3 py-1 text-sm text-green-700 disabled:opacity-40"
-          >
-            + Add stock
-          </button>
-          <button
-            onClick={() => logEntry("sold")}
-            disabled={saving}
-            className="rounded border border-red-300 px-3 py-1 text-sm text-red-600 disabled:opacity-40"
-          >
-            − Record sale
-          </button>
+      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="rounded-md border border-green-200 bg-green-50/50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-green-700">Add stock</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <input
+              type="number" min="1" value={receiveQty} onChange={(e) => setReceiveQty(e.target.value)}
+              placeholder="Qty"
+              className="w-16 rounded border border-zinc-300 px-2 py-1 text-sm"
+            />
+            <input
+              type="number" min="0" value={buyPrice} onChange={(e) => setBuyPrice(e.target.value)}
+              placeholder="Buy price"
+              className="w-24 rounded border border-zinc-300 px-2 py-1 text-sm"
+            />
+            <input
+              type="number" min="0" value={sellingPrice} onChange={(e) => setSellingPrice(e.target.value)}
+              placeholder="Sell price"
+              className="w-24 rounded border border-zinc-300 px-2 py-1 text-sm"
+            />
+            <input
+              value={receiveNote} onChange={(e) => setReceiveNote(e.target.value)}
+              placeholder="Note (optional)"
+              className="w-full rounded border border-zinc-300 px-2 py-1 text-sm sm:w-auto sm:flex-1"
+            />
+            <button
+              onClick={handleAddStock}
+              disabled={saving}
+              className="rounded bg-green-700 px-3 py-1 text-sm text-white disabled:opacity-40"
+            >
+              + Add stock
+            </button>
+          </div>
+        </div>
+
+        <div className="rounded-md border border-red-200 bg-red-50/50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-red-700">Record sale</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <input
+              type="number" min="1" value={saleQty} onChange={(e) => setSaleQty(e.target.value)}
+              placeholder="Qty"
+              className="w-16 rounded border border-zinc-300 px-2 py-1 text-sm"
+            />
+            <input
+              type="number" min="0" value={salePrice} onChange={(e) => setSalePrice(e.target.value)}
+              placeholder="Sale price"
+              className="w-24 rounded border border-zinc-300 px-2 py-1 text-sm"
+            />
+            <input
+              value={saleNote} onChange={(e) => setSaleNote(e.target.value)}
+              placeholder="Note (optional)"
+              className="w-full rounded border border-zinc-300 px-2 py-1 text-sm sm:w-auto sm:flex-1"
+            />
+            <button
+              onClick={handleRecordSale}
+              disabled={saving}
+              className="rounded bg-brand-red px-3 py-1 text-sm text-white disabled:opacity-40"
+            >
+              − Record sale
+            </button>
+          </div>
         </div>
       </div>
 
@@ -216,25 +289,31 @@ function PartRow({ part }: { part: Part }) {
           {!loadingHistory && entries.length === 0 && (
             <p className="text-xs text-zinc-400">No activity yet.</p>
           )}
-          {entries.map((entry) => (
-            <div key={entry.id} className="flex items-center justify-between text-xs text-zinc-600">
-              <span>
-                <span className={entry.entry_type === "received" ? "text-green-700" : "text-red-600"}>
-                  {entry.entry_type === "received" ? "+" : "-"}{entry.quantity}
+          {entries.map((entry) => {
+            const unitPrice = entry.entry_type === "received" ? entry.buy_price_rwf : entry.sale_price_rwf;
+            return (
+              <div key={entry.id} className="flex items-center justify-between text-xs text-zinc-600">
+                <span>
+                  <span className={entry.entry_type === "received" ? "text-green-700" : "text-red-600"}>
+                    {entry.entry_type === "received" ? "+" : "-"}{entry.quantity}
+                  </span>
+                  {" "}
+                  {entry.entry_type === "received" ? "bought" : "sold"}
+                  {unitPrice != null && ` @ ${unitPrice.toLocaleString()} RWF each`}
+                  {" "}&middot;{" "}
+                  {new Date(entry.created_at).toLocaleDateString()}
+                  {entry.note && <span className="text-zinc-400"> &middot; {entry.note}</span>}
                 </span>
-                {" "}
-                {new Date(entry.created_at).toLocaleDateString()}
-                {entry.note && <span className="text-zinc-400"> &middot; {entry.note}</span>}
-              </span>
-              <button
-                onClick={() => deleteEntry(entry.id)}
-                disabled={saving}
-                className="text-zinc-400 hover:text-red-600 disabled:opacity-40"
-              >
-                Undo
-              </button>
-            </div>
-          ))}
+                <button
+                  onClick={() => deleteEntry(entry.id)}
+                  disabled={saving}
+                  className="text-zinc-400 hover:text-red-600 disabled:opacity-40"
+                >
+                  Undo
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
