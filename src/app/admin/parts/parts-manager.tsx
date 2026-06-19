@@ -262,8 +262,8 @@ function PartRow({ part }: { part: Part }) {
             />
             <input
               type="number" min="0" value={costPrice} onChange={(e) => setCostPrice(e.target.value)}
-              placeholder="Cost (for profit)"
-              title="Cost basis for this sale, pre-filled from the last buy price"
+              placeholder="Buy price"
+              title="Buy price for this sale (profit = sale price - buy price), pre-filled from the last stock you added"
               className="w-28 rounded border border-zinc-300 px-2 py-1 text-sm"
             />
             <input
