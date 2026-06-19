@@ -5,7 +5,12 @@ import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { PageHeader } from "@/components/page-header";
 
-export default async function BookingPage() {
+export default async function BookingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ service?: string }>;
+}) {
+  const { service } = await searchParams;
   const supabase = await createClient();
   const { data: services } = await supabase
     .from("services")
@@ -24,7 +29,7 @@ export default async function BookingPage() {
 
       <main className="mx-auto max-w-xl px-6 py-12 flex-1 w-full">
         <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <BookingForm services={services ?? []} />
+          <BookingForm services={services ?? []} initialServiceId={service} />
         </div>
       </main>
 

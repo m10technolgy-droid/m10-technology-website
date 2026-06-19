@@ -8,10 +8,18 @@ import type { Service } from "@/lib/types";
 const inputClass =
   "mt-1 w-full rounded border border-zinc-300 px-3 py-2 outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red";
 
-export function BookingForm({ services }: { services: Service[] }) {
+export function BookingForm({
+  services,
+  initialServiceId,
+}: {
+  services: Service[];
+  initialServiceId?: string;
+}) {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
-  const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
+  const [serviceId, setServiceId] = useState(
+    services.some((s) => s.id === initialServiceId) ? initialServiceId! : services[0]?.id ?? ""
+  );
   const [scheduledAt, setScheduledAt] = useState("");
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");

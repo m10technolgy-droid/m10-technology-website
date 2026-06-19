@@ -42,9 +42,10 @@ export default async function ServicesPage() {
               {services!
                 .filter((s) => s.category === category)
                 .map((service) => (
-                  <div
+                  <Link
                     key={service.id}
-                    className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                    href={`/booking?service=${service.id}`}
+                    className="block rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md hover:border-brand-red/40"
                   >
                     <div className="flex items-baseline justify-between gap-3">
                       <h3 className="font-medium text-zinc-900">{service.name}</h3>
@@ -56,7 +57,7 @@ export default async function ServicesPage() {
                       <p className="mt-1 text-sm text-zinc-600">{service.description}</p>
                     )}
                     <p className="mt-2 text-xs text-zinc-400">~{service.duration_minutes} min</p>
-                  </div>
+                  </Link>
                 ))}
             </div>
           </div>
