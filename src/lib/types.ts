@@ -38,6 +38,22 @@ export type Ticket = {
   technician_notes: string | null;
 };
 
+export type Part = {
+  id: string;
+  name: string;
+  category: string;
+  stock_quantity: number;
+};
+
+export type PartStockEntry = {
+  id: string;
+  part_id: string;
+  entry_type: string;
+  quantity: number;
+  note: string | null;
+  created_at: string;
+};
+
 export type Booking = {
   id: string;
   full_name: string;
