@@ -101,7 +101,6 @@ function PartRow({ part }: { part: Part }) {
 
   const [saleQty, setSaleQty] = useState("1");
   const [salePrice, setSalePrice] = useState("");
-  const [costPrice, setCostPrice] = useState(part.last_buy_price_rwf?.toString() ?? "");
   const [saleNote, setSaleNote] = useState("");
 
   async function loadHistory() {
@@ -164,7 +163,7 @@ function PartRow({ part }: { part: Part }) {
       entry_type: "sold",
       quantity: qty,
       sale_price_rwf: salePrice ? Number(salePrice) : null,
-      cost_price_rwf: costPrice ? Number(costPrice) : null,
+      cost_price_rwf: part.last_buy_price_rwf,
       note: saleNote || null,
     });
 
@@ -259,12 +258,6 @@ function PartRow({ part }: { part: Part }) {
               type="number" min="0" value={salePrice} onChange={(e) => setSalePrice(e.target.value)}
               placeholder="Sale price"
               className="w-24 rounded border border-zinc-300 px-2 py-1 text-sm"
-            />
-            <input
-              type="number" min="0" value={costPrice} onChange={(e) => setCostPrice(e.target.value)}
-              placeholder="Buy price"
-              title="Buy price for this sale (profit = sale price - buy price), pre-filled from the last stock you added"
-              className="w-28 rounded border border-zinc-300 px-2 py-1 text-sm"
             />
             <input
               value={saleNote} onChange={(e) => setSaleNote(e.target.value)}
