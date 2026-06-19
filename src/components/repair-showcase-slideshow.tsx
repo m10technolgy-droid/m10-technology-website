@@ -34,10 +34,10 @@ export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
   }
 
   return (
-    <section className="py-16 px-6 bg-white">
-      <div className="mx-auto max-w-4xl">
-        <h2 className="text-2xl font-bold text-center text-zinc-900">Recent Repairs</h2>
-        <p className="mt-2 text-center text-zinc-600">Real before-and-after results from our workshop.</p>
+    <section className="py-20 px-6 bg-white">
+      <div className="mx-auto max-w-6xl">
+        <h2 className="text-3xl font-bold text-center text-zinc-900">Recent Repairs</h2>
+        <p className="mt-2 text-center text-lg text-zinc-600">Real before-and-after results from our workshop.</p>
 
         <div
           className="mt-10 relative"
@@ -46,18 +46,18 @@ export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
         >
           <div key={slide.id} className="animate-slide-fade">
             <div className="flex flex-col items-center gap-1.5">
-              <span className="flex items-center gap-2 text-lg font-semibold text-brand-navy">
-                <Wrench className="h-4 w-4 text-brand-red" strokeWidth={2} />
+              <span className="flex items-center gap-2 text-xl sm:text-2xl font-semibold text-brand-navy">
+                <Wrench className="h-5 w-5 text-brand-red" strokeWidth={2} />
                 {slide.title}
               </span>
-              <span className="h-0.5 w-10 rounded-full bg-brand-red" />
+              <span className="h-1 w-12 rounded-full bg-brand-red" />
             </div>
 
             <div className="mt-5 grid grid-cols-2 overflow-hidden rounded-xl border border-zinc-200">
               <div className="relative aspect-square">
                 <Image src={slide.beforeUrl} alt={`${slide.title} - before`} fill className="object-cover" />
                 <span className="absolute inset-0 flex items-center justify-center">
-                  <span className="rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-white">
+                  <span className="rounded-full bg-black/60 px-5 py-2 text-base font-semibold uppercase tracking-wide text-white">
                     Before
                   </span>
                 </span>
@@ -65,7 +65,7 @@ export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
               <div className="relative aspect-square border-l border-white/70">
                 <Image src={slide.afterUrl} alt={`${slide.title} - after`} fill className="object-cover" />
                 <span className="absolute inset-0 flex items-center justify-center">
-                  <span className="rounded-full bg-brand-red/80 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-white">
+                  <span className="rounded-full bg-brand-red/80 px-5 py-2 text-base font-semibold uppercase tracking-wide text-white">
                     After
                   </span>
                 </span>
