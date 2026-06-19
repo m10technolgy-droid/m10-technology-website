@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import type { Part } from "@/lib/types";
 
 type SoldEntry = {
   id: string;
@@ -41,8 +42,20 @@ function getStartDate(period: Period): Date {
 export default function AdminSalesPage() {
   const [period, setPeriod] = useState<Period>("daily");
   const [entries, setEntries] = useState<SoldEntry[]>([]);
+  const [outOfStock, setOutOfStock] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("parts")
+      .select("id, name, category, stock_quantity, selling_price_rwf, last_buy_price_rwf")
+      .lte("stock_quantity", 0)
+      .order("name")
+      .returns<Part[]>()
+      .then(({ data }) => setOutOfStock(data ?? []));
+  }, [entries]);
 
   async function loadEntries() {
     setLoading(true);
@@ -90,6 +103,23 @@ export default function AdminSalesPage() {
     .filter((e) => e.payment_status === "pending")
     .reduce((sum, e) => sum + e.quantity * (e.sale_price_rwf ?? 0), 0);
 
+  const bestSeller = (() => {
+    const totals = new Map<string, { quantity: number; revenue: number }>();
+    for (const e of entries) {
+      const name = e.parts?.name ?? "Unknown part";
+      const current = totals.get(name) ?? { quantity: 0, revenue: 0 };
+      totals.set(name, {
+        quantity: current.quantity + e.quantity,
+        revenue: current.revenue + e.quantity * (e.sale_price_rwf ?? 0),
+      });
+    }
+    let best: { name: string; quantity: number; revenue: number } | null = null;
+    for (const [name, t] of totals) {
+      if (!best || t.quantity > best.quantity) best = { name, ...t };
+    }
+    return best;
+  })();
+
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
       <h1 className="text-2xl font-semibold">Sales</h1>
@@ -109,7 +139,7 @@ export default function AdminSalesPage() {
         ))}
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="rounded-lg border border-zinc-200 bg-white p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Total selling</p>
           <p className="mt-1 text-2xl font-bold text-zinc-900">{totalSelling.toLocaleString()} RWF</p>
@@ -122,7 +152,31 @@ export default function AdminSalesPage() {
           <p className="text-xs font-medium uppercase tracking-wide text-amber-700">Pending payments</p>
           <p className="mt-1 text-2xl font-bold text-amber-700">{totalPending.toLocaleString()} RWF</p>
         </div>
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-blue-700">Best seller</p>
+          {bestSeller ? (
+            <>
+              <p className="mt-1 text-lg font-bold text-blue-900 truncate">{bestSeller.name}</p>
+              <p className="text-xs text-blue-700">{bestSeller.quantity} sold &middot; {bestSeller.revenue.toLocaleString()} RWF</p>
+            </>
+          ) : (
+            <p className="mt-1 text-sm text-blue-700">No sales yet</p>
+          )}
+        </div>
       </div>
+
+      {outOfStock.length > 0 && (
+        <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-red-700">Out of stock</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {outOfStock.map((part) => (
+              <span key={part.id} className="rounded-full bg-white px-3 py-1 text-sm text-red-700 border border-red-200">
+                {part.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {errorMessage && <p className="mt-4 text-sm text-red-600">{errorMessage}</p>}
 
