@@ -108,7 +108,7 @@ function PartRow({ part }: { part: Part }) {
     const supabase = createClient();
     const { data } = await supabase
       .from("part_stock_entries")
-      .select("id, part_id, entry_type, quantity, buy_price_rwf, sale_price_rwf, note, created_at")
+      .select("id, part_id, entry_type, quantity, buy_price_rwf, selling_price_rwf, sale_price_rwf, note, created_at")
       .eq("part_id", part.id)
       .order("created_at", { ascending: false })
       .limit(10)
@@ -300,6 +300,8 @@ function PartRow({ part }: { part: Part }) {
                   {" "}
                   {entry.entry_type === "received" ? "bought" : "sold"}
                   {unitPrice != null && ` @ ${unitPrice.toLocaleString()} RWF each`}
+                  {entry.entry_type === "received" && entry.selling_price_rwf != null &&
+                    ` (sell price set to ${entry.selling_price_rwf.toLocaleString()} RWF)`}
                   {" "}&middot;{" "}
                   {new Date(entry.created_at).toLocaleDateString()}
                   {entry.note && <span className="text-zinc-400"> &middot; {entry.note}</span>}
