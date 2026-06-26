@@ -13,6 +13,9 @@ export function PartsManager({ parts, categories }: { parts: Part[]; categories:
   const [adding, setAdding] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     setAdding(true);
@@ -31,6 +34,16 @@ export function PartsManager({ parts, categories }: { parts: Part[]; categories:
   }
 
   const usedCategories = Array.from(new Set(parts.map((p) => p.category)));
+
+  const query = search.trim().toLowerCase();
+  const filteredParts = parts.filter((p) => {
+    if (categoryFilter !== "all" && p.category !== categoryFilter) return false;
+    if (query && !p.name.toLowerCase().includes(query)) return false;
+    return true;
+  });
+  const filteredCategories = categoryFilter === "all"
+    ? usedCategories
+    : usedCategories.filter((c) => c === categoryFilter);
 
   return (
     <div className="mt-6 space-y-6">
@@ -66,14 +79,50 @@ export function PartsManager({ parts, categories }: { parts: Part[]; categories:
       </form>
       {errorMessage && <p className="mt-2 text-sm text-red-600">{errorMessage}</p>}
 
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search parts by name..."
+          className="min-w-[220px] flex-1 rounded border border-zinc-300 px-3 py-1.5 text-sm"
+        />
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setCategoryFilter("all")}
+            className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
+              categoryFilter === "all" ? "bg-brand-navy text-white" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+            }`}
+          >
+            All
+          </button>
+          {usedCategories.map((c) => (
+            <button
+              key={c}
+              onClick={() => setCategoryFilter(c)}
+              className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
+                categoryFilter === c ? "bg-brand-navy text-white" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="space-y-6">
         {parts.length === 0 && <p className="text-zinc-600">No parts yet. Add one above.</p>}
-        {usedCategories.map((categoryName) => {
-          const inCategory = parts.filter((p) => p.category === categoryName);
+        {parts.length > 0 && filteredParts.length === 0 && (
+          <p className="text-zinc-600">No parts match your search.</p>
+        )}
+        {filteredCategories.map((categoryName) => {
+          const inCategory = filteredParts.filter((p) => p.category === categoryName);
+          if (inCategory.length === 0) return null;
           return (
             <div key={categoryName}>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 capitalize">{categoryName}</h2>
-              <div className="mt-2 space-y-3">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 capitalize">
+                {categoryName} <span className="text-zinc-400">({inCategory.length})</span>
+              </h2>
+              <div className="mt-2 space-y-2">
                 {inCategory.map((part) => (
                   <PartRow key={part.id} part={part} />
                 ))}
@@ -88,6 +137,7 @@ export function PartsManager({ parts, categories }: { parts: Part[]; categories:
 
 function PartRow({ part }: { part: Part }) {
   const router = useRouter();
+  const [expanded, setExpanded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -201,8 +251,11 @@ function PartRow({ part }: { part: Part }) {
   }
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-3">
+    <div className="rounded-lg border border-zinc-200 bg-white">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex w-full flex-wrap items-baseline justify-between gap-3 p-4 text-left"
+      >
         <p className="font-medium text-zinc-900">{part.name}</p>
         <div className="flex items-center gap-3">
           {part.selling_price_rwf != null && (
@@ -215,9 +268,12 @@ function PartRow({ part }: { part: Part }) {
           ) : (
             <span className="text-sm font-semibold text-zinc-900">{part.stock_quantity} in stock</span>
           )}
+          <span className="text-xs text-zinc-400">{expanded ? "Hide ▲" : "Manage ▼"}</span>
         </div>
-      </div>
+      </button>
 
+      {expanded && (
+      <div className="px-4 pb-4">
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="rounded-md border border-green-200 bg-green-50/50 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-green-700">Add stock</p>
@@ -355,6 +411,8 @@ function PartRow({ part }: { part: Part }) {
             );
           })}
         </div>
+      )}
+      </div>
       )}
     </div>
   );
