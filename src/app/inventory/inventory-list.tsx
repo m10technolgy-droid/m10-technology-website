@@ -42,6 +42,48 @@ function PartBadge({ label, genuine }: { label: string; genuine: boolean | null 
   );
 }
 
+function PartRow({ label, genuine }: { label: string; genuine: boolean | null }) {
+  if (genuine === null) return null;
+  return (
+    <li className="text-sm text-zinc-700">
+      <span className="font-medium text-zinc-900">{label}</span> is replaced &mdash; quality:{" "}
+      <span className={genuine ? "font-medium text-green-700" : "font-medium text-amber-700"}>
+        {genuine ? "Genuine" : "Aftermarket"}
+      </span>
+    </li>
+  );
+}
+
+function PartsConditionList({ item }: { item: InventoryItem }) {
+  const anyChanged = item.screen_changed || item.battery_changed || item.camera_changed;
+  const anyOther = item.battery_health_percent !== null || item.faceid_working !== null;
+
+  if (!anyChanged && !anyOther) {
+    return <p className="text-sm text-zinc-500">No parts have been replaced on this device.</p>;
+  }
+
+  return (
+    <ul className="space-y-1.5">
+      <PartRow label="Screen" genuine={item.screen_genuine} />
+      <PartRow label="Battery" genuine={item.battery_genuine} />
+      {item.battery_health_percent !== null && (
+        <li className="text-sm text-zinc-700">
+          <span className="font-medium text-zinc-900">Battery health</span>: {item.battery_health_percent}%
+        </li>
+      )}
+      <PartRow label="Camera" genuine={item.camera_genuine} />
+      {item.faceid_working !== null && (
+        <li className="text-sm text-zinc-700">
+          <span className="font-medium text-zinc-900">Face ID</span> is{" "}
+          <span className={item.faceid_working ? "font-medium text-green-700" : "font-medium text-red-700"}>
+            {item.faceid_working ? "working" : "not working"}
+          </span>
+        </li>
+      )}
+    </ul>
+  );
+}
+
 function ConditionBadges({ item }: { item: InventoryItem }) {
   const hasAny =
     item.screen_changed || item.battery_changed || item.camera_changed ||
@@ -195,8 +237,11 @@ function DetailModal({ item, onClose }: { item: InventoryItem; onClose: () => vo
           </span>
         </div>
 
-        <div className="mt-3">
-          <ConditionBadges item={item} />
+        <div className="mt-4 border-t border-zinc-100 pt-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Parts &amp; condition</p>
+          <div className="mt-2">
+            <PartsConditionList item={item} />
+          </div>
         </div>
 
         <a
