@@ -55,42 +55,46 @@ export default async function Home() {
     afterUrl: supabase.storage.from("repair-photos").getPublicUrl(s.after_image_path).data.publicUrl,
   }));
 
+  const hasSlides = slides.length > 0;
+
   return (
     <div className="min-h-full flex flex-col">
       <Nav />
 
-      <RepairShowcaseSlideshow slides={slides} />
-
       {/* Hero */}
       <section className="bg-brand-navy text-white py-20 px-6">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="flex justify-center mb-6">
-            <Image src="/logo.png" alt="M10 Technology" width={100} height={100} className="brightness-0 invert" />
+        <div className={`mx-auto grid items-center gap-12 ${hasSlides ? "max-w-6xl lg:grid-cols-2" : "max-w-4xl"}`}>
+          <div className={hasSlides ? "text-center lg:text-left" : "text-center"}>
+            <div className={`flex mb-6 ${hasSlides ? "justify-center lg:justify-start" : "justify-center"}`}>
+              <Image src="/logo.png" alt="M10 Technology" width={100} height={100} className="brightness-0 invert" />
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
+              Fast, Reliable Device Repair<br />
+              <span className="text-brand-red">in Rubavu, Rwanda</span>
+            </h1>
+            <p className={`mt-4 text-lg text-zinc-300 max-w-xl ${hasSlides ? "mx-auto lg:mx-0" : "mx-auto"}`}>
+              Professional repair for all phone and computer brands. Free diagnostics, transparent pricing, 30-day warranty on every job.
+            </p>
+            <div className={`mt-8 flex flex-col sm:flex-row gap-3 ${hasSlides ? "justify-center lg:justify-start" : "justify-center"}`}>
+              <Link
+                href="/booking"
+                className="px-8 py-3 text-base font-semibold text-white rounded-md bg-brand-red hover:bg-brand-red-dark transition-colors"
+              >
+                Book a Repair
+              </Link>
+              <Link
+                href="/services"
+                className="px-8 py-3 text-base font-semibold text-white border border-white/30 rounded-md hover:bg-white/10 transition-colors"
+              >
+                View Services & Pricing
+              </Link>
+            </div>
+            <p className="mt-6 text-sm text-zinc-400">
+              Open Mon – Sun &nbsp;·&nbsp; 8:00 AM – 9:00 PM &nbsp;·&nbsp; Ubuntu House, 2nd Floor, Rubavu
+            </p>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-            Fast, Reliable Device Repair<br />
-            <span className="text-brand-red">in Rubavu, Rwanda</span>
-          </h1>
-          <p className="mt-4 text-lg text-zinc-300 max-w-xl mx-auto">
-            Professional repair for all phone and computer brands. Free diagnostics, transparent pricing, 30-day warranty on every job.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/booking"
-              className="px-8 py-3 text-base font-semibold text-white rounded-md bg-brand-red hover:bg-brand-red-dark transition-colors"
-            >
-              Book a Repair
-            </Link>
-            <Link
-              href="/services"
-              className="px-8 py-3 text-base font-semibold text-white border border-white/30 rounded-md hover:bg-white/10 transition-colors"
-            >
-              View Services & Pricing
-            </Link>
-          </div>
-          <p className="mt-6 text-sm text-zinc-400">
-            Open Mon – Sun &nbsp;·&nbsp; 8:00 AM – 9:00 PM &nbsp;·&nbsp; Ubuntu House, 2nd Floor, Rubavu
-          </p>
+
+          {hasSlides && <RepairShowcaseSlideshow slides={slides} />}
         </div>
       </section>
 
