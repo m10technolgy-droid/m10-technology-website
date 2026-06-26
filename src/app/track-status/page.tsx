@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Hash, Phone as PhoneIcon, SearchCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
@@ -16,7 +17,9 @@ type StatusResult = {
 };
 
 const inputClass =
-  "mt-1 w-full rounded border border-zinc-300 px-3 py-2 outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red";
+  "mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red";
+
+const labelClass = "flex items-center gap-1.5 text-sm font-medium text-zinc-700";
 
 export default function TrackStatusPage() {
   const [bookingId, setBookingId] = useState("");
@@ -63,7 +66,7 @@ export default function TrackStatusPage() {
         <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">Booking ID</label>
+              <label className={labelClass}><Hash size={14} className="text-brand-navy" /> Booking ID</label>
               <input
                 required
                 value={bookingId}
@@ -73,7 +76,7 @@ export default function TrackStatusPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium">Phone number</label>
+              <label className={labelClass}><PhoneIcon size={14} className="text-brand-navy" /> Phone number</label>
               <input
                 required
                 type="tel"
@@ -86,8 +89,9 @@ export default function TrackStatusPage() {
             <button
               type="submit"
               disabled={status === "loading"}
-              className="w-full rounded-md px-4 py-2 font-semibold text-white bg-brand-red hover:bg-brand-red-dark transition-colors disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-md px-4 py-2 font-semibold text-white bg-brand-red hover:bg-brand-red-dark transition-colors disabled:opacity-50"
             >
+              <SearchCheck size={16} />
               {status === "loading" ? "Checking..." : "Check status"}
             </button>
           </form>

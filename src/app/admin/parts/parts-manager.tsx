@@ -2,6 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Plus,
+  Minus,
+  Search,
+  ChevronDown,
+  ChevronUp,
+  PackagePlus,
+  ShoppingCart,
+  History,
+  Trash2,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Category, Part, PartStockEntry } from "@/lib/types";
 import { PartCategoriesManager } from "./part-categories-manager";
@@ -49,20 +60,20 @@ export function PartsManager({ parts, categories }: { parts: Part[]; categories:
     <div className="mt-6 space-y-6">
       <PartCategoriesManager categories={categories} />
 
-      <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-3 rounded-lg border border-zinc-200 bg-white p-4">
+      <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
         <input
           required
           placeholder="Part name (e.g. iPhone 12 Screen)"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="flex-1 min-w-[200px] rounded border border-zinc-300 px-2 py-1 text-sm"
+          className="flex-1 min-w-[200px] rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
         />
         <select
           required
           value={category}
           disabled={categories.length === 0}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded border border-zinc-300 px-2 py-1 text-sm capitalize"
+          className="rounded-md border border-zinc-300 px-2 py-1.5 text-sm capitalize outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
         >
           {categories.length === 0 && <option value="">Add a category first</option>}
           {categories.map((c) => (
@@ -72,20 +83,24 @@ export function PartsManager({ parts, categories }: { parts: Part[]; categories:
         <button
           type="submit"
           disabled={adding || categories.length === 0}
-          className="rounded bg-black px-3 py-1 text-sm text-white disabled:opacity-40"
+          className="flex items-center gap-1.5 rounded-md bg-brand-navy px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-brand-navy/90 disabled:opacity-40"
         >
+          <Plus size={15} />
           {adding ? "Adding..." : "Add part"}
         </button>
       </form>
       {errorMessage && <p className="mt-2 text-sm text-red-600">{errorMessage}</p>}
 
       <div className="flex flex-wrap items-center gap-3">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search parts by name..."
-          className="min-w-[220px] flex-1 rounded border border-zinc-300 px-3 py-1.5 text-sm"
-        />
+        <div className="relative min-w-[220px] flex-1">
+          <Search size={15} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search parts by name..."
+            className="w-full rounded-md border border-zinc-300 py-1.5 pl-8 pr-3 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
+          />
+        </div>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setCategoryFilter("all")}
@@ -251,7 +266,7 @@ function PartRow({ part }: { part: Part }) {
   }
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white">
+    <div className="rounded-xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md">
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex w-full flex-wrap items-baseline justify-between gap-3 p-4 text-left"
@@ -268,79 +283,86 @@ function PartRow({ part }: { part: Part }) {
           ) : (
             <span className="text-sm font-semibold text-zinc-900">{part.stock_quantity} in stock</span>
           )}
-          <span className="text-xs text-zinc-400">{expanded ? "Hide ▲" : "Manage ▼"}</span>
+          <span className="flex items-center gap-1 text-xs font-medium text-brand-navy">
+            {expanded ? "Hide" : "Manage"}
+            {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </span>
         </div>
       </button>
 
       {expanded && (
       <div className="px-4 pb-4">
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-md border border-green-200 bg-green-50/50 p-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-green-700">Add stock</p>
+        <div className="rounded-lg border border-green-200 bg-green-50/50 p-3">
+          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-green-700">
+            <PackagePlus size={14} /> Add stock
+          </p>
           <div className="mt-2 flex flex-wrap gap-2">
             <input
               type="number" min="1" value={receiveQty} onChange={(e) => setReceiveQty(e.target.value)}
               placeholder="Qty"
-              className="w-16 rounded border border-zinc-300 px-2 py-1 text-sm"
+              className="w-16 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
             />
             <input
               type="number" min="0" value={buyPrice} onChange={(e) => setBuyPrice(e.target.value)}
               placeholder="Buy price"
-              className="w-24 rounded border border-zinc-300 px-2 py-1 text-sm"
+              className="w-24 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
             />
             <input
               type="number" min="0" value={sellingPrice} onChange={(e) => setSellingPrice(e.target.value)}
               placeholder="Sell price"
-              className="w-24 rounded border border-zinc-300 px-2 py-1 text-sm"
+              className="w-24 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
             />
             <input
               value={receiveNote} onChange={(e) => setReceiveNote(e.target.value)}
               placeholder="Note (optional)"
-              className="w-full rounded border border-zinc-300 px-2 py-1 text-sm sm:w-auto sm:flex-1"
+              className="w-full rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 sm:w-auto sm:flex-1"
             />
             <button
               onClick={handleAddStock}
               disabled={saving}
-              className="rounded bg-green-700 px-3 py-1 text-sm text-white disabled:opacity-40"
+              className="flex items-center gap-1.5 rounded-md bg-green-700 px-3 py-1 text-sm text-white transition-colors hover:bg-green-800 disabled:opacity-40"
             >
-              + Add stock
+              <Plus size={14} /> Add stock
             </button>
           </div>
         </div>
 
-        <div className="rounded-md border border-red-200 bg-red-50/50 p-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-red-700">Record sale</p>
+        <div className="rounded-lg border border-red-200 bg-red-50/50 p-3">
+          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-red-700">
+            <ShoppingCart size={14} /> Record sale
+          </p>
           <div className="mt-2 flex flex-wrap gap-2">
             <input
               type="number" min="1" value={saleQty} onChange={(e) => setSaleQty(e.target.value)}
               placeholder="Qty"
-              className="w-16 rounded border border-zinc-300 px-2 py-1 text-sm"
+              className="w-16 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             />
             <input
               type="number" min="0" value={salePrice} onChange={(e) => setSalePrice(e.target.value)}
               placeholder="Sale price"
-              className="w-24 rounded border border-zinc-300 px-2 py-1 text-sm"
+              className="w-24 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             />
             <select
               value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}
-              className="rounded border border-zinc-300 px-2 py-1 text-sm"
+              className="rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
             >
               <option value="cash">Cash</option>
               <option value="momo">MoMo</option>
               <option value="crypto">Crypto</option>
             </select>
-            <div className="flex rounded border border-zinc-300 overflow-hidden text-sm">
+            <div className="flex rounded-md border border-zinc-300 overflow-hidden text-sm">
               <button
                 type="button"
                 onClick={() => setPaymentStatus("paid")}
-                className={`px-2 py-1 ${paymentStatus === "paid" ? "bg-zinc-900 text-white" : "bg-white text-zinc-600"}`}
+                className={`px-2 py-1 transition-colors ${paymentStatus === "paid" ? "bg-brand-navy text-white" : "bg-white text-zinc-600"}`}
               >
                 Paid now
               </button>
               <button
                 type="button"
                 onClick={() => setPaymentStatus("pending")}
-                className={`px-2 py-1 ${paymentStatus === "pending" ? "bg-zinc-900 text-white" : "bg-white text-zinc-600"}`}
+                className={`px-2 py-1 transition-colors ${paymentStatus === "pending" ? "bg-brand-navy text-white" : "bg-white text-zinc-600"}`}
               >
                 Pay later
               </button>
@@ -348,14 +370,14 @@ function PartRow({ part }: { part: Part }) {
             <input
               value={saleNote} onChange={(e) => setSaleNote(e.target.value)}
               placeholder="Note (optional)"
-              className="w-full rounded border border-zinc-300 px-2 py-1 text-sm sm:w-auto sm:flex-1"
+              className="w-full rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red sm:w-auto sm:flex-1"
             />
             <button
               onClick={handleRecordSale}
               disabled={saving}
-              className="rounded bg-brand-red px-3 py-1 text-sm text-white disabled:opacity-40"
+              className="flex items-center gap-1.5 rounded-md bg-brand-red px-3 py-1 text-sm text-white transition-colors hover:bg-brand-red-dark disabled:opacity-40"
             >
-              − Record sale
+              <Minus size={14} /> Record sale
             </button>
           </div>
         </div>
@@ -365,8 +387,9 @@ function PartRow({ part }: { part: Part }) {
 
       <button
         onClick={toggleHistory}
-        className="mt-3 text-xs font-medium text-brand-blue hover:underline"
+        className="mt-3 flex items-center gap-1.5 text-xs font-medium text-brand-blue hover:underline"
       >
+        <History size={13} />
         {historyOpen ? "Hide recent activity" : "Show recent activity"}
       </button>
 
@@ -403,9 +426,9 @@ function PartRow({ part }: { part: Part }) {
                 <button
                   onClick={() => deleteEntry(entry.id)}
                   disabled={saving}
-                  className="text-zinc-400 hover:text-red-600 disabled:opacity-40"
+                  className="flex items-center gap-1 text-zinc-400 hover:text-red-600 disabled:opacity-40"
                 >
-                  Undo
+                  <Trash2 size={12} /> Undo
                 </button>
               </div>
             );

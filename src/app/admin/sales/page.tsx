@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Banknote, TrendingUp, Clock, Award, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Part } from "@/lib/types";
 
@@ -122,10 +123,10 @@ export default function AdminSalesPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
-      <h1 className="text-2xl font-semibold">Sales</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900">Sales</h1>
       <p className="mt-1 text-sm text-zinc-500">Total selling and profit from parts sold.</p>
 
-      <div className="mt-6 inline-flex rounded-lg border border-zinc-200 bg-white p-1">
+      <div className="mt-6 inline-flex rounded-lg border border-zinc-200 bg-white p-1 shadow-sm">
         {PERIODS.map((p) => (
           <button
             key={p.value}
@@ -140,20 +141,28 @@ export default function AdminSalesPage() {
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Total selling</p>
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500">
+            <Banknote size={14} /> Total selling
+          </p>
           <p className="mt-1 text-2xl font-bold text-zinc-900">{totalSelling.toLocaleString()} RWF</p>
         </div>
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500">Total profit</p>
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-zinc-500">
+            <TrendingUp size={14} /> Total profit
+          </p>
           <p className="mt-1 text-2xl font-bold text-green-700">{totalProfit.toLocaleString()} RWF</p>
         </div>
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-amber-700">Pending payments</p>
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+          <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-amber-700">
+            <Clock size={14} /> Pending payments
+          </p>
           <p className="mt-1 text-2xl font-bold text-amber-700">{totalPending.toLocaleString()} RWF</p>
         </div>
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-blue-700">Best seller</p>
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 shadow-sm">
+          <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-blue-700">
+            <Award size={14} /> Best seller
+          </p>
           {bestSeller ? (
             <>
               <p className="mt-1 text-lg font-bold text-blue-900 truncate">{bestSeller.name}</p>
@@ -166,8 +175,10 @@ export default function AdminSalesPage() {
       </div>
 
       {outOfStock.length > 0 && (
-        <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-red-700">Out of stock</p>
+        <div className="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 shadow-sm">
+          <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-red-700">
+            <AlertTriangle size={14} /> Out of stock
+          </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {outOfStock.map((part) => (
               <span key={part.id} className="rounded-full bg-white px-3 py-1 text-sm text-red-700 border border-red-200">
@@ -195,7 +206,7 @@ export default function AdminSalesPage() {
           return (
             <div
               key={entry.id}
-              className={`flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3 text-sm ${
+              className={`flex flex-wrap items-center justify-between gap-2 rounded-xl border p-3 text-sm shadow-sm ${
                 pending ? "border-amber-200 bg-amber-50/50" : "border-zinc-200 bg-white"
               }`}
             >
@@ -219,13 +230,13 @@ export default function AdminSalesPage() {
                 {pending ? (
                   <button
                     onClick={() => markPaid(entry.id)}
-                    className="rounded border border-amber-400 px-2 py-1 text-xs font-medium text-amber-700 hover:bg-amber-100"
+                    className="flex items-center gap-1 rounded-md border border-amber-400 px-2 py-1 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-100"
                   >
-                    Mark as paid
+                    <CheckCircle2 size={13} /> Mark as paid
                   </button>
                 ) : (
-                  <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                    Paid
+                  <span className="flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                    <CheckCircle2 size={12} /> Paid
                   </span>
                 )}
               </div>

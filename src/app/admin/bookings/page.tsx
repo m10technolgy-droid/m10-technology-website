@@ -18,7 +18,8 @@ export default async function AdminBookingsPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="text-2xl font-semibold">Bookings</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900">Bookings</h1>
+      <p className="mt-1 text-sm text-zinc-500">Incoming bookings and their repair tickets.</p>
 
       {error && <p className="mt-4 text-red-600">Could not load bookings: {error.message}</p>}
 

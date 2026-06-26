@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Phone, Calendar, ClipboardList } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { StatusBadge } from "@/components/status-badge";
 import type { Booking, Ticket } from "@/lib/types";
 
 const BOOKING_STATUSES = ["pending", "confirmed", "in_progress", "completed", "cancelled"];
@@ -85,15 +87,20 @@ function BookingRow({ booking, ticket }: { booking: Booking; ticket: Ticket | un
   }
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
+    <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="font-medium">{booking.full_name}</h2>
-          <p className="text-sm text-zinc-500">
-            {booking.phone} &middot; {booking.services?.name ?? "Unknown service"}
+          <div className="flex items-center gap-2">
+            <h2 className="font-medium text-zinc-900">{booking.full_name}</h2>
+            <StatusBadge status={bookingStatus} />
+          </div>
+          <p className="mt-1 flex items-center gap-3 text-sm text-zinc-500">
+            <span className="flex items-center gap-1"><Phone size={13} /> {booking.phone}</span>
+            <span className="flex items-center gap-1"><ClipboardList size={13} /> {booking.services?.name ?? "Unknown service"}</span>
           </p>
         </div>
-        <p className="text-sm text-zinc-500">
+        <p className="flex items-center gap-1 text-sm text-zinc-500">
+          <Calendar size={13} />
           {new Date(booking.scheduled_at).toLocaleString()}
         </p>
       </div>
@@ -106,7 +113,7 @@ function BookingRow({ booking, ticket }: { booking: Booking; ticket: Ticket | un
           <select
             value={bookingStatus}
             onChange={(e) => setBookingStatus(e.target.value)}
-            className="mt-1 rounded border border-zinc-300 px-2 py-1 text-sm"
+            className="mt-1 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
           >
             {BOOKING_STATUSES.map((s) => (
               <option key={s} value={s}>{s}</option>
@@ -116,7 +123,7 @@ function BookingRow({ booking, ticket }: { booking: Booking; ticket: Ticket | un
         <button
           onClick={saveBookingStatus}
           disabled={savingBooking || bookingStatus === booking.status}
-          className="rounded bg-black px-3 py-1 text-sm text-white disabled:opacity-40"
+          className="rounded-md bg-brand-navy px-3 py-1 text-sm text-white transition-colors hover:bg-brand-navy/90 disabled:opacity-40"
         >
           {savingBooking ? "Saving..." : "Save status"}
         </button>
@@ -127,7 +134,7 @@ function BookingRow({ booking, ticket }: { booking: Booking; ticket: Ticket | un
           <button
             onClick={openTicket}
             disabled={savingTicket}
-            className="rounded border border-zinc-300 px-3 py-1 text-sm disabled:opacity-40"
+            className="rounded-md border border-zinc-300 px-3 py-1 text-sm transition-colors hover:border-brand-navy hover:text-brand-navy disabled:opacity-40"
           >
             {savingTicket ? "Opening..." : "Open repair ticket"}
           </button>
@@ -138,7 +145,7 @@ function BookingRow({ booking, ticket }: { booking: Booking; ticket: Ticket | un
               <select
                 value={ticketStatus}
                 onChange={(e) => setTicketStatus(e.target.value)}
-                className="mt-1 rounded border border-zinc-300 px-2 py-1 text-sm"
+                className="mt-1 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               >
                 {TICKET_STATUSES.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -150,13 +157,13 @@ function BookingRow({ booking, ticket }: { booking: Booking; ticket: Ticket | un
               <input
                 value={technicianNotes}
                 onChange={(e) => setTechnicianNotes(e.target.value)}
-                className="mt-1 w-full rounded border border-zinc-300 px-2 py-1 text-sm"
+                className="mt-1 w-full rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
               />
             </div>
             <button
               onClick={saveTicket}
               disabled={savingTicket}
-              className="rounded bg-black px-3 py-1 text-sm text-white disabled:opacity-40"
+              className="rounded-md bg-brand-navy px-3 py-1 text-sm text-white transition-colors hover:bg-brand-navy/90 disabled:opacity-40"
             >
               {savingTicket ? "Saving..." : "Save ticket"}
             </button>

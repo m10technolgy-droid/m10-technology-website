@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Tag, X, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Category } from "@/lib/types";
 
@@ -41,23 +42,26 @@ export function CategoriesManager({ categories }: { categories: Category[] }) {
   }
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4">
-      <h2 className="font-medium text-zinc-900">Categories</h2>
+    <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <h2 className="flex items-center gap-1.5 font-medium text-zinc-900">
+        <Tag size={16} className="text-brand-navy" />
+        Categories
+      </h2>
 
       <div className="mt-3 flex flex-wrap gap-2">
         {categories.length === 0 && <p className="text-sm text-zinc-500">No categories yet.</p>}
         {categories.map((category) => (
           <span
             key={category.id}
-            className="inline-flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1 text-sm"
+            className="inline-flex items-center gap-2 rounded-full border border-brand-navy/10 bg-brand-navy/5 px-3 py-1 text-sm text-brand-navy"
           >
             {category.name}
             <button
               onClick={() => remove(category.id)}
-              className="text-zinc-400 hover:text-red-600"
+              className="text-brand-navy/40 hover:text-red-600"
               aria-label={`Remove ${category.name}`}
             >
-              &times;
+              <X size={13} />
             </button>
           </span>
         ))}
@@ -69,13 +73,14 @@ export function CategoriesManager({ categories }: { categories: Category[] }) {
           placeholder="New category name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="flex-1 rounded border border-zinc-300 px-2 py-1 text-sm"
+          className="flex-1 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
         />
         <button
           type="submit"
           disabled={adding}
-          className="rounded bg-black px-3 py-1 text-sm text-white disabled:opacity-40"
+          className="flex items-center gap-1.5 rounded-md bg-brand-navy px-3 py-1 text-sm font-medium text-white transition-colors hover:bg-brand-navy/90 disabled:opacity-40"
         >
+          <Plus size={14} />
           {adding ? "Adding..." : "Add category"}
         </button>
       </form>

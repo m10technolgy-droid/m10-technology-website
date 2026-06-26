@@ -20,7 +20,8 @@ export default async function AdminServicesPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
-      <h1 className="text-2xl font-semibold">Services & Pricing</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900">Services & Pricing</h1>
+      <p className="mt-1 text-sm text-zinc-500">Manage repair services, categories, and prices.</p>
 
       {error && <p className="mt-4 text-red-600">Could not load services: {error.message}</p>}
 

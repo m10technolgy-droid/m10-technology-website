@@ -13,7 +13,8 @@ export default async function AdminInventoryPage() {
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
-      <h1 className="text-2xl font-semibold">Inventory</h1>
+      <h1 className="text-2xl font-semibold text-zinc-900">Inventory</h1>
+      <p className="mt-1 text-sm text-zinc-500">Second-hand devices listed for sale.</p>
 
       {error && <p className="mt-4 text-red-600">Could not load inventory: {error.message}</p>}
 

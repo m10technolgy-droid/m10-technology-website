@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { User, Phone as PhoneIcon, Wrench, CalendarClock, MessageSquare, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Service } from "@/lib/types";
 
 const inputClass =
-  "mt-1 w-full rounded border border-zinc-300 px-3 py-2 outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red";
+  "mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red";
+
+const labelClass = "flex items-center gap-1.5 text-sm font-medium text-zinc-700";
 
 export function BookingForm({
   services,
@@ -54,13 +57,15 @@ export function BookingForm({
     return (
       <div>
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-700">✓</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-700">
+            <CheckCircle2 size={18} />
+          </span>
           <p className="font-medium text-zinc-900">Booking confirmed</p>
         </div>
         <p className="mt-3 text-sm text-zinc-600">
           Save this booking ID, you&apos;ll need it with your phone number to track your repair status:
         </p>
-        <code className="mt-2 block break-all rounded bg-zinc-50 border border-zinc-200 px-3 py-2 text-sm">
+        <code className="mt-2 block break-all rounded-md bg-zinc-50 border border-zinc-200 px-3 py-2 text-sm">
           {bookingId}
         </code>
         <Link
@@ -76,7 +81,7 @@ export function BookingForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium">Full name</label>
+        <label className={labelClass}><User size={14} className="text-brand-navy" /> Full name</label>
         <input
           required
           value={fullName}
@@ -86,7 +91,7 @@ export function BookingForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Phone number</label>
+        <label className={labelClass}><PhoneIcon size={14} className="text-brand-navy" /> Phone number</label>
         <input
           required
           type="tel"
@@ -98,7 +103,7 @@ export function BookingForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Service</label>
+        <label className={labelClass}><Wrench size={14} className="text-brand-navy" /> Service</label>
         <select
           required
           value={serviceId}
@@ -114,7 +119,7 @@ export function BookingForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Preferred date & time</label>
+        <label className={labelClass}><CalendarClock size={14} className="text-brand-navy" /> Preferred date & time</label>
         <input
           required
           type="datetime-local"
@@ -125,7 +130,7 @@ export function BookingForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium">Notes (optional)</label>
+        <label className={labelClass}><MessageSquare size={14} className="text-brand-navy" /> Notes (optional)</label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}

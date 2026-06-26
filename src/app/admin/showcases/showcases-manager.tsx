@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Upload, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { RepairShowcase } from "@/lib/types";
 
@@ -69,13 +70,13 @@ export function ShowcasesManager({ showcases }: { showcases: AdminShowcase[] }) 
 
   return (
     <div className="mt-6">
-      <form onSubmit={handleAdd} className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4">
+      <form onSubmit={handleAdd} className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
         <input
           required
           placeholder="Title (e.g. iPhone 12 Screen Replacement)"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full rounded border border-zinc-300 px-2 py-1 text-sm"
+          className="w-full rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
         />
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
@@ -85,7 +86,7 @@ export function ShowcasesManager({ showcases }: { showcases: AdminShowcase[] }) 
               type="file"
               accept="image/*"
               onChange={(e) => setBeforeFile(e.target.files?.[0] ?? null)}
-              className="mt-1 w-full text-sm"
+              className="mt-1 w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-brand-navy/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-brand-navy hover:file:bg-brand-navy/20"
             />
           </div>
           <div>
@@ -95,15 +96,16 @@ export function ShowcasesManager({ showcases }: { showcases: AdminShowcase[] }) 
               type="file"
               accept="image/*"
               onChange={(e) => setAfterFile(e.target.files?.[0] ?? null)}
-              className="mt-1 w-full text-sm"
+              className="mt-1 w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-brand-navy/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-brand-navy hover:file:bg-brand-navy/20"
             />
           </div>
         </div>
         <button
           type="submit"
           disabled={uploading}
-          className="rounded bg-black px-3 py-1 text-sm text-white disabled:opacity-40"
+          className="flex items-center gap-1.5 rounded-md bg-brand-navy px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-brand-navy/90 disabled:opacity-40"
         >
+          <Upload size={15} />
           {uploading ? "Uploading..." : "Add to showcase"}
         </button>
       </form>
@@ -162,14 +164,14 @@ function ShowcaseRow({ showcase }: { showcase: AdminShowcase }) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-4 rounded-lg border border-zinc-200 bg-white p-4">
+    <div className="flex flex-wrap items-center gap-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex gap-2">
-        <Image src={showcase.beforeUrl} alt="Before" width={64} height={64} className="h-16 w-16 rounded object-cover" />
-        <Image src={showcase.afterUrl} alt="After" width={64} height={64} className="h-16 w-16 rounded object-cover" />
+        <Image src={showcase.beforeUrl} alt="Before" width={64} height={64} className="h-16 w-16 rounded-lg object-cover" />
+        <Image src={showcase.afterUrl} alt="After" width={64} height={64} className="h-16 w-16 rounded-lg object-cover" />
       </div>
-      <p className="flex-1 font-medium min-w-[150px]">{showcase.title}</p>
+      <p className="flex-1 font-medium text-zinc-900 min-w-[150px]">{showcase.title}</p>
 
-      <label className="flex items-center gap-2 text-sm">
+      <label className="flex items-center gap-2 text-sm text-zinc-700">
         <input
           type="checkbox"
           checked={isPublished}
@@ -182,8 +184,9 @@ function ShowcaseRow({ showcase }: { showcase: AdminShowcase }) {
       <button
         onClick={remove}
         disabled={saving}
-        className="rounded border border-red-300 px-3 py-1 text-sm text-red-600 disabled:opacity-40"
+        className="flex items-center gap-1.5 rounded-md border border-red-300 px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50 disabled:opacity-40"
       >
+        <Trash2 size={14} />
         Delete
       </button>
 
