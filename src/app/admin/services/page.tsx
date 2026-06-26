@@ -8,9 +8,16 @@ export default async function AdminServicesPage() {
 
   const { data: services, error } = await supabase
     .from("services")
-    .select("id, name, category, description, price_rwf, duration_minutes, is_active")
+    .select("id, name, category, description, price_rwf, duration_minutes, is_active, image_path")
     .order("category")
     .returns<(Service & { is_active: boolean })[]>();
+
+  const withUrls = (services ?? []).map((s) => ({
+    ...s,
+    imageUrl: s.image_path
+      ? supabase.storage.from("repair-photos").getPublicUrl(s.image_path).data.publicUrl
+      : null,
+  }));
 
   const { data: categories } = await supabase
     .from("categories")
@@ -29,7 +36,7 @@ export default async function AdminServicesPage() {
         <CategoriesManager categories={categories ?? []} />
       </div>
 
-      <ServicesManager services={services ?? []} categories={categories ?? []} />
+      <ServicesManager services={withUrls} categories={categories ?? []} />
     </main>
   );
 }

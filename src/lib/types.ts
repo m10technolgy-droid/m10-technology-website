@@ -5,6 +5,7 @@ export type Service = {
   description: string | null;
   price_rwf: number;
   duration_minutes: number;
+  image_path: string | null;
 };
 
 export type InventoryItem = {
