@@ -24,6 +24,8 @@ export type InventoryItem = {
   camera_changed: boolean;
   camera_genuine: boolean | null;
   faceid_working: boolean | null;
+  storage_gb: number | null;
+  battery_health_percent: number | null;
 };
 
 export type Category = {

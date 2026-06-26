@@ -16,6 +16,7 @@ const emptyForm = {
   model: "",
   condition_grade: "",
   price_rwf: "",
+  storage_gb: "",
   status: "available",
 };
 
@@ -76,6 +77,7 @@ export function InventoryManager({ items }: { items: InventoryItem[] }) {
   const [cameraChanged, setCameraChanged] = useState(false);
   const [cameraGenuine, setCameraGenuine] = useState(true);
   const [faceidWorking, setFaceidWorking] = useState("na");
+  const [batteryHealthPercent, setBatteryHealthPercent] = useState("");
   const [adding, setAdding] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -105,11 +107,13 @@ export function InventoryManager({ items }: { items: InventoryItem[] }) {
       condition_grade: form.condition_grade,
       price_rwf: Number(form.price_rwf),
       status: form.status,
+      storage_gb: form.storage_gb ? Number(form.storage_gb) : null,
       photo_urls: photoUrls.length > 0 ? photoUrls : null,
       screen_changed: screenChanged,
       screen_genuine: screenChanged ? screenGenuine : null,
       battery_changed: batteryChanged,
       battery_genuine: batteryChanged ? batteryGenuine : null,
+      battery_health_percent: batteryHealthPercent ? Number(batteryHealthPercent) : null,
       camera_changed: cameraChanged,
       camera_genuine: cameraChanged ? cameraGenuine : null,
       faceid_working: faceidWorking === "na" ? null : faceidWorking === "yes",
@@ -124,6 +128,7 @@ export function InventoryManager({ items }: { items: InventoryItem[] }) {
       setBatteryChanged(false);
       setCameraChanged(false);
       setFaceidWorking("na");
+      setBatteryHealthPercent("");
       router.refresh();
     }
     setAdding(false);
@@ -147,6 +152,9 @@ export function InventoryManager({ items }: { items: InventoryItem[] }) {
             className="rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red sm:col-span-1" />
           <input required type="number" placeholder="Price (RWF)" value={form.price_rwf}
             onChange={(e) => setForm({ ...form, price_rwf: e.target.value })}
+            className="rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red sm:col-span-1" />
+          <input type="number" min="1" placeholder="Storage (GB)" value={form.storage_gb}
+            onChange={(e) => setForm({ ...form, storage_gb: e.target.value })}
             className="rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red sm:col-span-1" />
           <button type="submit" disabled={adding}
             className="flex items-center justify-center gap-1.5 rounded-md bg-brand-navy px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-brand-navy/90 disabled:opacity-40 sm:col-span-1">
@@ -176,14 +184,22 @@ export function InventoryManager({ items }: { items: InventoryItem[] }) {
           <PartToggleRow label="Camera" changed={cameraChanged} onChangedChange={setCameraChanged} genuine={cameraGenuine} onGenuineChange={setCameraGenuine} />
         </div>
 
-        <div>
-          <label className="block text-xs font-medium text-zinc-500">Face ID</label>
-          <select value={faceidWorking} onChange={(e) => setFaceidWorking(e.target.value)}
-            className="mt-1 rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red">
-            <option value="na">N/A (no Face ID)</option>
-            <option value="yes">Working</option>
-            <option value="no">Not working</option>
-          </select>
+        <div className="flex flex-wrap gap-3">
+          <div>
+            <label className="block text-xs font-medium text-zinc-500">Battery health (%)</label>
+            <input type="number" min="0" max="100" placeholder="e.g. 92" value={batteryHealthPercent}
+              onChange={(e) => setBatteryHealthPercent(e.target.value)}
+              className="mt-1 w-28 rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500">Face ID</label>
+            <select value={faceidWorking} onChange={(e) => setFaceidWorking(e.target.value)}
+              className="mt-1 rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red">
+              <option value="na">N/A (no Face ID)</option>
+              <option value="yes">Working</option>
+              <option value="no">Not working</option>
+            </select>
+          </div>
         </div>
       </form>
       {errorMessage && <p className="mt-2 text-sm text-red-600">{errorMessage}</p>}
@@ -203,6 +219,7 @@ function InventoryRow({ item }: { item: InventoryItem }) {
   const [expanded, setExpanded] = useState(false);
   const [status, setStatus] = useState(item.status);
   const [priceRwf, setPriceRwf] = useState(String(item.price_rwf));
+  const [storageGb, setStorageGb] = useState(item.storage_gb?.toString() ?? "");
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -211,6 +228,7 @@ function InventoryRow({ item }: { item: InventoryItem }) {
   const [screenGenuine, setScreenGenuine] = useState(item.screen_genuine ?? true);
   const [batteryChanged, setBatteryChanged] = useState(item.battery_changed);
   const [batteryGenuine, setBatteryGenuine] = useState(item.battery_genuine ?? true);
+  const [batteryHealthPercent, setBatteryHealthPercent] = useState(item.battery_health_percent?.toString() ?? "");
   const [cameraChanged, setCameraChanged] = useState(item.camera_changed);
   const [cameraGenuine, setCameraGenuine] = useState(item.camera_genuine ?? true);
   const [faceidWorking, setFaceidWorking] = useState(
@@ -223,7 +241,11 @@ function InventoryRow({ item }: { item: InventoryItem }) {
     const supabase = createClient();
     const { error } = await supabase
       .from("inventory")
-      .update({ status, price_rwf: Number(priceRwf) })
+      .update({
+        status,
+        price_rwf: Number(priceRwf),
+        storage_gb: storageGb ? Number(storageGb) : null,
+      })
       .eq("id", item.id);
 
     if (error) {
@@ -309,6 +331,7 @@ function InventoryRow({ item }: { item: InventoryItem }) {
         battery_genuine: batteryChanged ? batteryGenuine : null,
         camera_changed: cameraChanged,
         camera_genuine: cameraChanged ? cameraGenuine : null,
+        battery_health_percent: batteryHealthPercent ? Number(batteryHealthPercent) : null,
         faceid_working: faceidWorking === "na" ? null : faceidWorking === "yes",
       })
       .eq("id", item.id);
@@ -321,7 +344,10 @@ function InventoryRow({ item }: { item: InventoryItem }) {
     setSaving(false);
   }
 
-  const dirty = status !== item.status || Number(priceRwf) !== item.price_rwf;
+  const dirty =
+    status !== item.status ||
+    Number(priceRwf) !== item.price_rwf ||
+    storageGb !== (item.storage_gb?.toString() ?? "");
 
   const STATUS_STYLES: Record<string, string> = {
     available: "bg-green-100 text-green-700",
@@ -339,13 +365,22 @@ function InventoryRow({ item }: { item: InventoryItem }) {
               {item.status}
             </span>
           </div>
-          <p className="text-sm text-zinc-500">{item.device_type} &middot; Grade {item.condition_grade}</p>
+          <p className="text-sm text-zinc-500">
+            {item.device_type} &middot; Grade {item.condition_grade}
+            {item.storage_gb != null && <> &middot; {item.storage_gb}GB</>}
+          </p>
         </div>
 
         <div>
           <label className="block text-xs font-medium text-zinc-500">Price (RWF)</label>
           <input type="number" value={priceRwf} onChange={(e) => setPriceRwf(e.target.value)}
             className="mt-1 w-28 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red" />
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-zinc-500">Storage (GB)</label>
+          <input type="number" min="1" value={storageGb} onChange={(e) => setStorageGb(e.target.value)}
+            className="mt-1 w-24 rounded-md border border-zinc-300 px-2 py-1 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red" />
         </div>
 
         <div>
@@ -419,6 +454,12 @@ function InventoryRow({ item }: { item: InventoryItem }) {
           </div>
 
           <div className="flex flex-wrap items-end gap-3">
+            <div>
+              <label className="block text-xs font-medium text-zinc-500">Battery health (%)</label>
+              <input type="number" min="0" max="100" value={batteryHealthPercent}
+                onChange={(e) => setBatteryHealthPercent(e.target.value)}
+                className="mt-1 w-24 rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red" />
+            </div>
             <div>
               <label className="block text-xs font-medium text-zinc-500">Face ID</label>
               <select value={faceidWorking} onChange={(e) => setFaceidWorking(e.target.value)}

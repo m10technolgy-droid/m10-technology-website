@@ -9,7 +9,8 @@ export default async function AdminInventoryPage() {
     .from("inventory")
     .select(
       "id, device_type, brand, model, condition_grade, price_rwf, photo_urls, status, " +
-      "screen_changed, screen_genuine, battery_changed, battery_genuine, camera_changed, camera_genuine, faceid_working"
+      "screen_changed, screen_genuine, battery_changed, battery_genuine, camera_changed, camera_genuine, faceid_working, " +
+      "storage_gb, battery_health_percent"
     )
     .order("created_at", { ascending: false })
     .returns<InventoryItem[]>();

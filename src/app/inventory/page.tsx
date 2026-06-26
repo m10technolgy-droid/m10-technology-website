@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { InventoryItem } from "@/lib/types";
 import Image from "next/image";
-import { Laptop, Monitor, Smartphone, Wrench, ScanFace, type LucideIcon } from "lucide-react";
+import { Laptop, Monitor, Smartphone, Wrench, ScanFace, BatteryMedium, type LucideIcon } from "lucide-react";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { PageHeader } from "@/components/page-header";
@@ -33,7 +33,8 @@ export default async function InventoryPage() {
     .from("inventory")
     .select(
       "id, device_type, brand, model, condition_grade, price_rwf, photo_urls, status, " +
-      "screen_changed, screen_genuine, battery_changed, battery_genuine, camera_changed, camera_genuine, faceid_working"
+      "screen_changed, screen_genuine, battery_changed, battery_genuine, camera_changed, camera_genuine, faceid_working, " +
+      "storage_gb, battery_health_percent"
     )
     .eq("status", "available")
     .order("created_at", { ascending: false })
@@ -96,17 +97,27 @@ export default async function InventoryPage() {
                         {item.price_rwf.toLocaleString()} RWF
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-zinc-500 capitalize">{item.device_type}</p>
+                    <p className="mt-1 text-sm text-zinc-500 capitalize">
+                      {item.device_type}
+                      {item.storage_gb != null && <> &middot; {item.storage_gb}GB</>}
+                    </p>
                     <span className="mt-2 inline-block rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 capitalize">
                       Grade {item.condition_grade}
                     </span>
                   </div>
                 </div>
 
-                {(item.screen_changed || item.battery_changed || item.camera_changed || item.faceid_working !== null) && (
+                {(item.screen_changed || item.battery_changed || item.camera_changed ||
+                  item.faceid_working !== null || item.battery_health_percent !== null) && (
                   <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-zinc-100 pt-3">
                     {item.screen_changed && <PartBadge label="Screen" genuine={item.screen_genuine} />}
                     {item.battery_changed && <PartBadge label="Battery" genuine={item.battery_genuine} />}
+                    {item.battery_health_percent !== null && (
+                      <span className="flex items-center gap-1 rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-700">
+                        <BatteryMedium size={12} />
+                        Battery health {item.battery_health_percent}%
+                      </span>
+                    )}
                     {item.camera_changed && <PartBadge label="Camera" genuine={item.camera_genuine} />}
                     {item.faceid_working !== null && (
                       <span
