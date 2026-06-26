@@ -7,7 +7,10 @@ export default async function AdminInventoryPage() {
 
   const { data: items, error } = await supabase
     .from("inventory")
-    .select("id, device_type, brand, model, condition_grade, price_rwf, photo_urls, status")
+    .select(
+      "id, device_type, brand, model, condition_grade, price_rwf, photo_urls, status, " +
+      "screen_changed, screen_genuine, battery_changed, battery_genuine, camera_changed, camera_genuine, faceid_working"
+    )
     .order("created_at", { ascending: false })
     .returns<InventoryItem[]>();
 

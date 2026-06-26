@@ -17,6 +17,13 @@ export type InventoryItem = {
   price_rwf: number;
   photo_urls: string[] | null;
   status: string;
+  screen_changed: boolean;
+  screen_genuine: boolean | null;
+  battery_changed: boolean;
+  battery_genuine: boolean | null;
+  camera_changed: boolean;
+  camera_genuine: boolean | null;
+  faceid_working: boolean | null;
 };
 
 export type Category = {
