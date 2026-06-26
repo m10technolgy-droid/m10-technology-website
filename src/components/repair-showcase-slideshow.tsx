@@ -39,13 +39,13 @@ export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div key={slide.id} className="animate-slide-fade rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+      <div key={slide.id} className="animate-slide-fade rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
         <div className="flex items-center gap-2">
           <Wrench className="h-4 w-4 text-brand-red" strokeWidth={2} />
-          <span className="text-sm font-semibold text-white">{slide.title}</span>
+          <span className="text-sm font-semibold text-zinc-900">{slide.title}</span>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 overflow-hidden rounded-xl border border-white/10">
+        <div className="mt-3 grid grid-cols-2 overflow-hidden rounded-xl border border-zinc-200">
           <div className="relative aspect-square">
             <Image src={slide.beforeUrl} alt={`${slide.title} - before`} fill className="object-cover" />
             <span className="absolute inset-0 flex items-center justify-center">
@@ -54,7 +54,7 @@ export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
               </span>
             </span>
           </div>
-          <div className="relative aspect-square border-l border-white/20">
+          <div className="relative aspect-square border-l border-zinc-200">
             <Image src={slide.afterUrl} alt={`${slide.title} - after`} fill className="object-cover" />
             <span className="absolute inset-0 flex items-center justify-center">
               <span className="rounded-full bg-brand-red/80 px-4 py-1.5 text-sm font-semibold uppercase tracking-wide text-white">
@@ -89,7 +89,7 @@ export function RepairShowcaseSlideshow({ slides }: { slides: Slide[] }) {
                 onClick={() => setIndex(i)}
                 aria-label={`Go to slide ${i + 1}`}
                 className={`h-2.5 w-2.5 rounded-full transition-colors ${
-                  i === index ? "bg-brand-red" : "bg-white/30"
+                  i === index ? "bg-brand-red" : "bg-zinc-200"
                 }`}
               />
             ))}
