@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ScanSearch, Zap, ShieldCheck, Smartphone } from "lucide-react";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
@@ -62,12 +61,9 @@ export default async function Home() {
       <Nav />
 
       {/* Hero */}
-      <section className="py-20 px-6">
+      <section className="py-10 px-6">
         <div className={`mx-auto grid items-center gap-12 ${hasSlides ? "max-w-6xl lg:grid-cols-2" : "max-w-4xl"}`}>
           <div className={hasSlides ? "text-center lg:text-left" : "text-center"}>
-            <div className={`flex mb-6 ${hasSlides ? "justify-center lg:justify-start" : "justify-center"}`}>
-              <Image src="/logo.png" alt="M10 Technology" width={100} height={100} />
-            </div>
             <h1 className="text-4xl sm:text-5xl font-bold leading-tight text-zinc-900">
               Fast, Reliable Device Repair<br />
               <span className="text-brand-red">in Rubavu, Rwanda</span>
