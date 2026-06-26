@@ -7,7 +7,7 @@ export default async function AdminShowcasesPage() {
 
   const { data: showcases, error } = await supabase
     .from("repair_showcases")
-    .select("id, title, before_image_path, after_image_path, is_published")
+    .select("id, title, description, before_image_path, after_image_path, is_published")
     .order("created_at", { ascending: false })
     .returns<RepairShowcase[]>();
 

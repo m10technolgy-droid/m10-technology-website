@@ -27,6 +27,7 @@ export type Category = {
 export type RepairShowcase = {
   id: string;
   title: string;
+  description: string | null;
   before_image_path: string;
   after_image_path: string;
   is_published: boolean;

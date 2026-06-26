@@ -42,14 +42,16 @@ export default async function Home() {
   const supabase = await createClient();
   const { data: showcases } = await supabase
     .from("repair_showcases")
-    .select("id, title, before_image_path, after_image_path")
+    .select("id, title, description, before_image_path, after_image_path")
+    .eq("is_published", true)
     .order("created_at", { ascending: false })
     .limit(10)
-    .returns<Pick<RepairShowcase, "id" | "title" | "before_image_path" | "after_image_path">[]>();
+    .returns<Pick<RepairShowcase, "id" | "title" | "description" | "before_image_path" | "after_image_path">[]>();
 
   const slides = (showcases ?? []).map((s) => ({
     id: s.id,
     title: s.title,
+    description: s.description,
     beforeUrl: supabase.storage.from("repair-photos").getPublicUrl(s.before_image_path).data.publicUrl,
     afterUrl: supabase.storage.from("repair-photos").getPublicUrl(s.after_image_path).data.publicUrl,
   }));
