@@ -151,17 +151,17 @@ export default async function Home() {
       </section>
 
       {/* Second-hand devices CTA */}
-      <section className="py-16 px-6 bg-brand-blue">
-        <div className="mx-auto max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="text-white">
-            <h2 className="text-2xl font-bold">Quality Second-Hand Devices</h2>
-            <p className="mt-2 text-blue-100">
+      <section className="py-16 px-6 bg-zinc-50">
+        <div className="mx-auto max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-6 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+          <div>
+            <h2 className="text-2xl font-bold text-zinc-900">Quality Second-Hand Devices</h2>
+            <p className="mt-2 text-zinc-600">
               Inspected, tested, and guaranteed. Phones and laptops at fair prices — every device comes with our quality assurance.
             </p>
           </div>
           <Link
             href="/inventory"
-            className="shrink-0 px-8 py-3 text-sm font-semibold text-brand-blue bg-white rounded-md hover:bg-zinc-100 transition-colors"
+            className="shrink-0 px-8 py-3 text-sm font-semibold text-white bg-brand-red rounded-md hover:bg-brand-red-dark transition-colors"
           >
             Browse devices
           </Link>
