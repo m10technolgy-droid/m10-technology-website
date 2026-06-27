@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { InventoryItem } from "@/lib/types";
 import { Nav } from "@/components/nav";
@@ -37,7 +38,11 @@ export default async function InventoryPage() {
           </p>
         )}
 
-        {items && items.length > 0 && <InventoryList items={items} />}
+        {items && items.length > 0 && (
+          <Suspense>
+            <InventoryList items={items} />
+          </Suspense>
+        )}
       </main>
 
       <Footer />

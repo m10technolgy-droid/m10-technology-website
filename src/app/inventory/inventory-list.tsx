@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
   Laptop,
@@ -116,7 +117,11 @@ function ConditionBadges({ item }: { item: InventoryItem }) {
 }
 
 export function InventoryList({ items }: { items: InventoryItem[] }) {
-  const [selected, setSelected] = useState<InventoryItem | null>(null);
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get("highlight");
+  const [selected, setSelected] = useState<InventoryItem | null>(
+    items.find((i) => i.id === highlightId) ?? null
+  );
 
   return (
     <>
